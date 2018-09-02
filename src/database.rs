@@ -18,7 +18,7 @@ fn read_schema<P>(path: P) -> io::Result<String>
     Ok(schema)
 }
 
-fn init_schema<P>(conn: &Connection, path: P) -> Result<()>
+fn exec_file<P>(conn: &Connection, path: P) -> Result<()>
     where P: AsRef<Path> {
     let schema = match read_schema(path) {
         Ok(s) => s,
@@ -27,9 +27,29 @@ fn init_schema<P>(conn: &Connection, path: P) -> Result<()>
     conn.execute_batch(schema.as_str())
 }
 
-pub fn create_connection<P1, P2>(database: P1, schema: P2) -> Result<DbConn>
-    where P1: AsRef<Path>, P2: AsRef<Path> {
+fn create_connection_with_scripts<P>(database: P, schema: Option<P>, testdata: Option<P>) -> Result<DbConn>
+    where P: AsRef<Path> {
     let conn = Connection::open(database)?;
-    init_schema(&conn, schema)?;
+    if let Some(sc) = schema {
+        exec_file(&conn, sc)?;
+    }
+    if let Some(data) = testdata {
+        exec_file(&conn, data)?;
+    }
     Ok(Mutex::new(conn))
+}
+
+pub fn create_connection<P>(database: P) -> Result<DbConn>
+    where P: AsRef<Path> {
+    create_connection_with_scripts(database, None, None)
+}
+
+pub fn create_connection_with_schema<P>(database: P, schema: P) -> Result<DbConn>
+    where P: AsRef<Path> {
+    create_connection_with_scripts(database, Some(schema), None)
+}
+
+pub fn create_connection_with_testdata<P>(database: P, schema: P, testdata: P) -> Result<DbConn>
+    where P: AsRef<Path> {
+    create_connection_with_scripts(database, Some(schema), Some(testdata))
 }
