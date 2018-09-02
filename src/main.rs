@@ -1,21 +1,21 @@
-#![feature(plugin)]
+#![feature(plugin, custom_derive, decl_macro, never_type)]
 #![plugin(rocket_codegen)]
 
-extern crate rocket;
 extern crate rocket_contrib;
+extern crate rocket;
 extern crate rusqlite;
 mod database;
+mod user;
 
 use std::collections::HashMap;
 use rocket::State;
+use rocket::response::Redirect;
 use rocket_contrib::Template;
 use database::DbConn;
 
 #[get("/")]
-fn index(_db_conn: State<DbConn>) -> Template {
-    let mut map: HashMap<&str, &str> = HashMap::new();
-    map.insert("message", "Hello, World!");
-    Template::render("index", map)
+fn index(_db_conn: State<DbConn>) -> Redirect {
+    Redirect::to("/login")
 }
 
 #[get("/character/<id>")]
@@ -32,7 +32,6 @@ fn get_character(db_conn: State<DbConn>, id: i32) -> Template {
             return Template::render("500", map);
         }
     };
-    println!("{:?}", character);
     map.insert("title", format!("{}'s Character Sheet", character.name));
     map.insert("name", character.name);
     map.insert("strength", character.strength.to_string());
@@ -45,7 +44,7 @@ fn get_character(db_conn: State<DbConn>, id: i32) -> Template {
 
 fn main() {
     let conn = database::create_connection_with_testdata(":memory:", "schema.sql", "testdata.sql").expect("Failed to open database");
-    rocket::ignite().mount("/", routes![index, get_character])
+    rocket::ignite().mount("/", routes![index, get_character, user::login, user::login_page, user::user_page])
                     .attach(Template::fairing())
                     .manage(conn)
                     .launch();

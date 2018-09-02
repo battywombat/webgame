@@ -1,3 +1,9 @@
+INSERT INTO users VALUES(
+    1,
+    "paule",
+    "pass"
+);
+
 INSERT INTO characters VALUES(
     1,
     "Hitoshura",
@@ -5,5 +11,6 @@ INSERT INTO characters VALUES(
     15,
     18,
     15,
-    11
+    11,
+    1
 );

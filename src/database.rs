@@ -5,8 +5,8 @@ use std::io;
 use std::io::prelude::*;
 use std::path::Path;
 use std::sync::Mutex;
-use self::rusqlite::Connection;
-use self::rusqlite::Result;
+use rusqlite::Connection;
+use rusqlite::Result;
 
 pub type DbConn = Mutex<Connection>;
 
