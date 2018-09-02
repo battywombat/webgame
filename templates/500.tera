@@ -1,0 +1,5 @@
+{% extends "layout" %}
+{% block body %}
+    <p>There was an error with our database. Please try again later!</p>
+    <p>Error: {{ errormessage }} </p>
+{% endblock body %}

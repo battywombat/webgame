@@ -1,0 +1,9 @@
+{% extends "layout" %}
+{% block body %}
+    <h2>{{ name }}</h2>
+    <p>Strength: {{ strength }}</p>
+    <p>Magic: {{ magic }}</p>
+    <p>Vitality: {{ vitality }}</p>
+    <p>Agility: {{ agility }}</p>
+    <p>Luck: {{ luck }}</p>
+{% endblock body %}

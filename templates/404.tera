@@ -1,0 +1,4 @@
+{% extends "layout" %}
+{% block body %}
+    <p>Sorry, We couldn't find the page you asked for!</p>
+{% endblock body %}
