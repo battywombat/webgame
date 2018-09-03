@@ -44,7 +44,7 @@ fn get_character(db_conn: State<DbConn>, id: i32) -> Template {
 
 fn main() {
     let conn = database::create_connection_with_testdata(":memory:", "schema.sql", "testdata.sql").expect("Failed to open database");
-    rocket::ignite().mount("/", routes![index, get_character, user::login, user::login_page, user::user_page])
+    rocket::ignite().mount("/", routes![index, get_character, user::login, user::login_page, user::user_page, user::logout])
                     .attach(Template::fairing())
                     .manage(conn)
                     .launch();
