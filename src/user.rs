@@ -70,7 +70,7 @@ pub fn login(db_conn: State<DbConn>, mut cookies: Cookies, user_form: Form<User>
 
 #[post("/logout")]
 pub fn logout(mut cookies: Cookies) -> Redirect {
-    cookies.remove_private(Cookie.named("user_id"));
+    cookies.remove_private(Cookie::named("user_id"));
     Redirect::to("/login")
 }
 
