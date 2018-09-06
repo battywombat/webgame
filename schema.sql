@@ -22,5 +22,6 @@ CREATE TABLE characters(
 DROP TABLE IF EXISTS tile_files;
 CREATE TABLE tile_files(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
+    ntiles INTEGER,
     path TEXT
 );

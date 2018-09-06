@@ -15,7 +15,7 @@ INSERT INTO characters VALUES(
     1
 );
 
-INSERT INTO tile_files VALUES(
+INSERT INTO tile_files (ntiles, path) VALUES(
     1,
-    "/resources/tiles/PathAndObjects_0.png"
+    "resources/tiles/PathAndObjects_0.png"
 );

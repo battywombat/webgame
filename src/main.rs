@@ -27,7 +27,10 @@ fn index(_db_conn: State<DbConn>) -> Redirect {
 
 fn main() {
     let conn = database::create_connection_with_testdata(":memory:", "schema.sql", "testdata.sql").expect("Failed to open database");
-    rocket::ignite().mount("/", routes![index, character::get_character_page, user::login, user::login_page, user::user_page, user::logout, tiles::get_tilemap])
+    rocket::ignite().mount("/", routes![index,
+                                        character::get_character_page,
+                                        user::login, user::login_page, user::user_page, user::logout,
+                                        tiles::get_tilemap, tiles::get_tile_file])
                     .attach(Template::fairing())
                     .manage(conn)
                     .launch();
