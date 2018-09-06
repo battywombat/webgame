@@ -25,11 +25,6 @@ fn get_tilemap(db_conn: State<DbConn>) -> Json<Vec<TileRecord>> {
     Json(tiles)
 }
 
-#[get("/tilefiles")]
-fn get_tile_files(db_conn: State<DbConn>) -> Json<TileFiles> {
-    Json(get_all_tile_files(&db_conn.lock().unwrap()).unwrap())
-}
-
 #[get("/tile/<id>")]
 fn get_tile_file(db_conn: State<DbConn>, id: i32) -> File {
     let conn = &db_conn.lock().unwrap();
@@ -52,23 +47,6 @@ fn get_all_tiles(conn: &Connection) -> rusqlite::Result<Vec<TileRecord>> {
     }
 
     Ok(tiles)
-}
-
-fn get_all_tile_files(conn: &Connection) -> rusqlite::Result<TileFiles> {
-    let mut tiles = vec![];
-    let mut stmt = conn.prepare_cached("SELECT id FROM tile_files ORDER BY id")?;
-
-    let tile_results = stmt.query_map(&[], |row| {
-        let id = row.get(0);    
-        (id, format!("/tile/{}", id))
-    })?;
-                
-    for tile in tile_results {
-        tiles.push(tile?);
-    }
-    Ok(TileFiles {
-        tiles
-    })
 }
 
 fn get_tile_path_from_id(conn: &Connection, id: i32) -> rusqlite::Result<String> {
