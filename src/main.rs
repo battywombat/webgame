@@ -12,7 +12,7 @@ extern crate serde_json;
 mod database;
 mod user;
 mod character;
-mod tiles;
+mod graphics;
 
 use rocket::State;
 use rocket::response::Redirect;
@@ -30,7 +30,7 @@ fn main() {
     rocket::ignite().mount("/", routes![index,
                                         character::get_character_page,
                                         user::login, user::login_page, user::user_page, user::logout,
-                                        tiles::get_tile_file, tiles::get_tilemap])
+                                        graphics::get_tile_file, graphics::get_tilemap])
                     .attach(Template::fairing())
                     .manage(conn)
                     .launch();
