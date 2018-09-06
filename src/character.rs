@@ -2,8 +2,10 @@ use rusqlite;
 
 use std::collections::HashMap;
 use rocket::State;
+use rocket::response::Failure;
+use rocket::http::Status;
 use rocket_contrib::Template;
-use rusqlite::{Connection, Result};
+use rusqlite::Connection;
 use database::DbConn;
 
 #[derive(Debug)]
@@ -17,7 +19,7 @@ pub struct Character {
     pub luck: u8
 }
 
-pub fn get_character(conn: &Connection, id: i32) -> Result<Character> {
+pub fn get_character(conn: &Connection, id: i32) -> rusqlite::Result<Character> {
     let res = conn.query_row("SELECT id, cname, strength, magic, vitality, agility, luck FROM characters WHERE id=?", &[&id], |row| {
         let id = row.get_checked(0)?;
         let name = row.get_checked(1)?;
@@ -44,18 +46,16 @@ pub fn get_character(conn: &Connection, id: i32) -> Result<Character> {
 }
 
 #[get("/character/<id>")]
-fn get_character_page(db_conn: State<DbConn>, id: i32) -> Template {
-    let conn = db_conn.lock().unwrap();
+fn get_character_page(db_conn: State<DbConn>, id: i32) -> Result<Template, Failure> {
+    let conn = match db_conn.lock() {
+        Ok(c) => c,
+        Err(_) => return Err(Failure(Status::new(500, "Failed to lock database")))
+    };
     let mut map = HashMap::new();
     let character = match get_character(&conn, id) {
         Ok(c) => c,
-        Err(rusqlite::Error::QueryReturnedNoRows) => {
-            return Template::render("404", map);
-        }
-        Err(e) => {
-            map.insert("errormessage", format!("{:?}", e));
-            return Template::render("500", map);
-        }
+        Err(rusqlite::Error::QueryReturnedNoRows) => return Err(Failure(Status::NotFound)),
+        Err(_) => return Err(Failure(Status::new(500, "Database error")))
     };
     map.insert("title", format!("{}'s Character Sheet", character.name));
     map.insert("name", character.name);
@@ -64,5 +64,5 @@ fn get_character_page(db_conn: State<DbConn>, id: i32) -> Template {
     map.insert("vitality", character.vitality.to_string());
     map.insert("agility", character.agility.to_string());
     map.insert("luck", character.luck.to_string());
-    Template::render("character", map)
+    Ok(Template::render("character", map))
 }
