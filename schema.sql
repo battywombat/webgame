@@ -18,3 +18,9 @@ CREATE TABLE characters(
     player INTEGER,
      FOREIGN KEY(player) REFERENCES users(id)
 );
+
+DROP TABLE IF EXISTS tile_files;
+CREATE TABLE tile_files(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    path TEXT
+);

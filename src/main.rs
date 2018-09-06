@@ -4,9 +4,15 @@
 extern crate rocket_contrib;
 extern crate rocket;
 extern crate rusqlite;
+#[macro_use]
+extern crate serde_derive;
+extern crate serde;
+extern crate serde_json;
+
 mod database;
 mod user;
 mod character;
+mod tiles;
 
 use rocket::State;
 use rocket::response::Redirect;
@@ -21,7 +27,7 @@ fn index(_db_conn: State<DbConn>) -> Redirect {
 
 fn main() {
     let conn = database::create_connection_with_testdata(":memory:", "schema.sql", "testdata.sql").expect("Failed to open database");
-    rocket::ignite().mount("/", routes![index, character::get_character_page, user::login, user::login_page, user::user_page, user::logout])
+    rocket::ignite().mount("/", routes![index, character::get_character_page, user::login, user::login_page, user::user_page, user::logout, tiles::get_tilemap])
                     .attach(Template::fairing())
                     .manage(conn)
                     .launch();

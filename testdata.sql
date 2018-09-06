@@ -14,3 +14,8 @@ INSERT INTO characters VALUES(
     11,
     1
 );
+
+INSERT INTO tile_files VALUES(
+    1,
+    "/resources/tiles/PathAndObjects_0.png"
+);
