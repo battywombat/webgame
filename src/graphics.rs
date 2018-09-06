@@ -22,12 +22,12 @@ struct TileRecord {
 
 #[get("/tilemap")]
 fn get_tilemap(db_conn: State<DbConn>) -> Result<Json<Vec<TileRecord>>, Failure> {
-    let conn = match db_conn.lock().unwrap() {
+    let conn = match db_conn.lock() {
         Ok(c) => c,
-        Err(_) => Err(Failure(Status::new(500, "Failed to lock database")))
+        Err(_) => return Err(Failure(Status::new(500, "Failed to lock database")))
     };
 
-    match get_all_tiles(conn) {
+    match get_all_tiles(&conn) {
         Ok(tiles) => Ok(Json(tiles)),
         Err(_) => Err(Failure(Status::new(500, "Error accessing database")))
     }
