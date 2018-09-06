@@ -30,7 +30,7 @@ fn main() {
     rocket::ignite().mount("/", routes![index,
                                         character::get_character_page,
                                         user::login, user::login_page, user::user_page, user::logout,
-                                        tiles::get_tilemap, tiles::get_tile_file])
+                                        tiles::get_tile_files, tiles::get_tile_file])
                     .attach(Template::fairing())
                     .manage(conn)
                     .launch();
