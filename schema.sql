@@ -16,7 +16,7 @@ CREATE TABLE characters(
     agility INTEGER,
     luck INTEGER,
     player INTEGER,
-     FOREIGN KEY(player) REFERENCES users(id)
+    FOREIGN KEY(player) REFERENCES users(id)
 );
 
 DROP TABLE IF EXISTS tile_files;
@@ -24,4 +24,12 @@ CREATE TABLE tile_files(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     ntiles INTEGER,
     path TEXT
+);
+
+DROP TABLE IF EXISTS tiles;
+CREATE TABLE tiles(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    tile_file INTEGER,
+    sub_id INTEGER,
+    FOREIGN KEY (tile_file) REFERENCES tile_files(id)
 );

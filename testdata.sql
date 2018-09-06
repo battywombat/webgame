@@ -16,6 +16,8 @@ INSERT INTO characters VALUES(
 );
 
 INSERT INTO tile_files (ntiles, path) VALUES(
-    1,
+    140,
     "resources/tiles/PathAndObjects_0.png"
 );
+
+INSERT INTO tiles (tile_file, sub_id) VALUES (1, 0), (1, 1), (1, 2), (1, 3), (1, 4);
