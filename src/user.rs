@@ -45,12 +45,24 @@ fn login_page(flash: Option<FlashMessage>) -> Template {
 }
 
 #[get("/user")]
-pub fn user_page(db_conn: State<DbConn>, userid: UserId) -> Template {
-    let mut map = HashMap::new();
-    let user = get_user_by_id(&db_conn.lock().unwrap(), userid.0).unwrap();
-    map.insert("title", String::from("User Page"));
-    map.insert("name", user.username);
-    Template::render("user", map)
+pub fn user_page(db_conn: State<DbConn>, userid: Option<UserId>) -> Result<Template, Flash<Redirect>> {
+    match userid {
+        Some(userid) => {
+            let mut map = HashMap::new();
+            let conn = match db_conn.lock() {
+                Ok(c) => c,
+                Err(_) => return Err(Flash::error(Redirect::to("login"), "Something went wrong with our database."))
+            };
+            // Will never fail, and if it does, we have bigger problems.
+            let user = get_user_by_id(&conn, userid.0).unwrap();
+            map.insert("title", String::from("User Page"));
+            map.insert("name", user.username);
+            Ok(Template::render("user", map))
+        },
+        None => {
+            Err(Flash::error(Redirect::to("login"), "Please log in first."))
+        }
+    }
 }
 
 #[post("/login", data= "<user_form>")]
@@ -60,10 +72,10 @@ pub fn login(db_conn: State<DbConn>, mut cookies: Cookies, user_form: Form<User>
     match validate(&conn, user) {
         Ok(id) => {
             cookies.add_private(Cookie::new("user_id", id.to_string()));
-            Ok(Redirect::to("/user"))
+            Ok(Redirect::to("user"))
         },
         Err(_) => {
-            Err(Flash::error(Redirect::to("/login"), "Invalid username/password"))
+            Err(Flash::error(Redirect::to("login"), "Invalid username/password"))
         }
     }
 }
@@ -71,7 +83,7 @@ pub fn login(db_conn: State<DbConn>, mut cookies: Cookies, user_form: Form<User>
 #[post("/logout")]
 pub fn logout(mut cookies: Cookies) -> Redirect {
     cookies.remove_private(Cookie::named("user_id"));
-    Redirect::to("/login")
+    Redirect::to("login")
 }
 
 #[derive(Debug)]
