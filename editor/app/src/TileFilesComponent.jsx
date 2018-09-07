@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from './TileFile.css';
+import styles from './TileFileComponent.css';
 
 const electron = require('electron');
 
@@ -32,7 +32,7 @@ class TileFileList extends React.Component {
     render() {
         let files = this.props.files.map((file) => <TileFile key={file.key} src={file.src} />);
         return <div>{files}</div>
-    } 
+    }
 }
 
 export default class TileFilesComponent extends React.Component {
