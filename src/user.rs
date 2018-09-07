@@ -7,7 +7,7 @@ use rocket::State;
 use rocket::http::{Cookie, Cookies};
 use rocket::request::{self, FromRequest, Request, FlashMessage, Form};
 use rocket::response::{Redirect, Flash};
-use rocket::outcome::IntoOutcome;
+use rocket::Outcome;
 use rocket_contrib::Template;
 use rusqlite::Connection;
 use database::DbConn;
@@ -18,17 +18,28 @@ pub struct User {
     pub password: String
 }
 
-pub struct UserId(i32);
+pub struct UserLogin {
+    id: i32,
+    character: Option<i32>
+}
 
-impl<'a, 'r> FromRequest<'a, 'r> for UserId {
-    type Error = !;
+#[derive(Debug)]
+pub struct AuthenticationError;
 
-    fn from_request(request: &'a Request<'r>) -> request::Outcome<UserId, !> {
-        request.cookies()
-            .get_private("user_id")
-            .and_then(|cookie| cookie.value().parse().ok())
-            .map(|id| UserId(id))
-            .or_forward(())
+impl<'a, 'r> FromRequest<'a, 'r> for UserLogin {
+    type Error = AuthenticationError;
+
+    fn from_request(request: &'a Request<'r>) -> request::Outcome<UserLogin, Self::Error> {
+        let mut cookies = request.cookies();
+        let id = match cookies.get_private("user_id").and_then(|cookie| cookie.value().parse().ok()) {
+            Some(i) => i,
+            None => return Outcome::Forward(())
+        };
+        let character = cookies.get_private("user_character").and_then(|cookie| cookie.value().parse().ok());
+        Outcome::Success(UserLogin {
+            id,
+            character
+        })
     }
 }
 
@@ -45,16 +56,16 @@ fn login_page(flash: Option<FlashMessage>) -> Template {
 }
 
 #[get("/user")]
-pub fn user_page(db_conn: State<DbConn>, userid: Option<UserId>) -> Result<Template, Flash<Redirect>> {
-    match userid {
-        Some(userid) => {
+pub fn user_page(db_conn: State<DbConn>, user: Option<UserLogin>) -> Result<Template, Flash<Redirect>> {
+    match user {
+        Some(user) => {
             let mut map = HashMap::new();
             let conn = match db_conn.lock() {
                 Ok(c) => c,
                 Err(_) => return Err(Flash::error(Redirect::to("login"), "Something went wrong with our database."))
             };
             // Will never fail, and if it does, we have bigger problems.
-            let user = get_user_by_id(&conn, userid.0).unwrap();
+            let user = get_user_by_id(&conn, user.id).unwrap();
             map.insert("title", String::from("User Page"));
             map.insert("name", user.username);
             Ok(Template::render("user", map))
