@@ -35,7 +35,7 @@ CREATE TABLE sectordata(
     sector INTEGER,
     sector_sub_id INTEGER,
     tile INTEGER,
-    FOREIGN KEY(sector) REFERENCES sector(id),
+    FOREIGN KEY(sector) REFERENCES sectors(id),
     FOREIGN KEY(tile) REFERENCES tiles(id)
 );
 
@@ -50,6 +50,5 @@ CREATE TABLE characters(
     luck INTEGER,
     player INTEGER,
     logged_in INTEGER,
-    FOREIGN KEY(player) REFERENCES users(id),
-    FOREIGN KEY(sector) REFERENCES sectors(id)
+    FOREIGN KEY(player) REFERENCES users(id)
 );

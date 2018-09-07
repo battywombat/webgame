@@ -13,7 +13,7 @@ INSERT INTO tiles (tile_file, sub_id) VALUES (1, 0), (1, 1), (1, 2), (1, 3), (1,
 
 INSERT INTO sectors (sector_name, width, height) VALUES ("Test Map", 10, 10);
 
-INSERT INTO characters (cname, strength, magic, vitality, agility, luck, player, logged_in, sector) VALUES(
+INSERT INTO characters (cname, strength, magic, vitality, agility, luck, player, logged_in) VALUES(
     "Hitoshura",
     20,
     15,
@@ -21,6 +21,5 @@ INSERT INTO characters (cname, strength, magic, vitality, agility, luck, player,
     15,
     11,
     1,
-    0,
-    1
+    0
 );
