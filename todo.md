@@ -10,4 +10,6 @@ Frontend:
     define basic structure of HTML document
 
 Tooling:
-    Research into tooling options to create maps
+    Create Tile File upload widget
+    create tile widget
+    create map renderer widget
