@@ -1,12 +1,22 @@
 import React, {Component} from 'react';
+import update from 'immutability-helper';
 
-const fs = require('fs');
+import TileFilesComponent from './TileFilesComponent';
 
 export default class App extends Component {
+    constructor(props, context) {
+        super(props, context);
+        this.state = {
+            tileFiles: []
+        };
+    }
+
     render() {
+        const tileFileCallbacks = {
+            onTileFileAdded: this.onTileFileAdded.bind(this)
+        };
         return (<div>
-            <h1>Hello, Node!</h1>
-            <button onClick={this.handleClick}>Click Me Please!</button>
+            <TileFilesComponent files={this.state.tileFiles} callbacks={tileFileCallbacks}/>
             </div>
         )
     }
@@ -15,6 +25,13 @@ export default class App extends Component {
         fs.exists('fakePath', (exists) => {
             console.log("Console existence is: ");
             console.log(exists);
-        })
+        });
+    }
+
+    onTileFileAdded(newFile) {
+        let newFileKey = this.state.tileFiles.length;
+        this.setState(update(this.state, {
+            tileFiles: {$push: [{ key: newFileKey, src: newFile }]}
+        }));
     }
 }
