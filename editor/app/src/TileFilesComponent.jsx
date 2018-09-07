@@ -1,4 +1,5 @@
 import React from 'react';
+import styles from './TileFile.css';
 
 const electron = require('electron');
 
@@ -22,7 +23,7 @@ class AddTileFileButton extends React.Component {
 
 class TileFile extends React.Component {
     render() {
-        return <img src={this.props.src} />
+        return <img className={styles.TileFile} src={this.props.src} />
     }
 }
 
