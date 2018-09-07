@@ -9,7 +9,7 @@ function createWindow () {
     win = new BrowserWindow({width: 800, height: 600});
 
     // Webpack server operates on localhost:3000
-    win.loadURL('http://localhost:3000');
+    win.loadURL(`file://${__dirname}/app/index.html`);
 
     // Open the DevTools.
     win.webContents.openDevTools();
