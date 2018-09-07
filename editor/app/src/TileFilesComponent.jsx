@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from './TileFileComponent.css';
+import styles from './TileFilesComponent.css';
 
 const electron = require('electron');
 
@@ -23,14 +23,18 @@ class AddTileFileButton extends React.Component {
 
 class TileFile extends React.Component {
     render() {
-        return <img className={styles.TileFile} src={this.props.src} />
+        return <img onDoubleClick={this.doubleClicked.bind(this)} className={styles.TileFile} src={this.props.src} />
+    }
+
+    doubleClicked() {
+        this.props.callback(this.props.id);
     }
 }
 
 class TileFileList extends React.Component {
 
     render() {
-        let files = this.props.files.map((file) => <TileFile key={file.key} src={file.src} />);
+        let files = this.props.files.map((file) => <TileFile id={file.key} callback={this.props.callback} key={file.key} src={file.src} />);
         return <div>{files}</div>
     }
 }
@@ -38,8 +42,8 @@ class TileFileList extends React.Component {
 export default class TileFilesComponent extends React.Component {
 
     render() {
-        return <div>
-            <TileFileList files={this.props.files} />
+        return <div className={styles.TileFilesComponent}>
+            <TileFileList callback={this.props.callbacks.onDisplayTileFile} files={this.props.files} />
             <AddTileFileButton callback={this.props.callbacks.onTileFileAdded}/>
         </div>
     }
