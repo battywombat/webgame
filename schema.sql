@@ -31,10 +31,11 @@ CREATE TABLE sectors(
 
 DROP TABLE IF EXISTS sectordata;
 CREATE TABLE sectordata(
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
     sector INTEGER,
-    sector_sub_id INTEGER,
+    x INTEGER,
+    y INTEGER,
     tile INTEGER,
+    PRIMARY KEY(sector, x, y),
     FOREIGN KEY(sector) REFERENCES sectors(id),
     FOREIGN KEY(tile) REFERENCES tiles(id)
 );
