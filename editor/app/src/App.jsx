@@ -12,7 +12,8 @@ export default class App extends Component {
         super(props, context);
         this.state = {
             tileFiles: [],
-            tileEditorSelected: -1
+            tileEditorSelected: -1,
+            tileEditorScrollScale: 0.5
         };
     }
 
@@ -31,7 +32,8 @@ export default class App extends Component {
             <TileEditorComponent height={editingTileFile.height}
                                  width={editingTileFile.width}
                                  src={editingTileFile.src}
-                                 callbacks={tileEditorCallbacks} />
+                                 callbacks={tileEditorCallbacks}
+                                 scrollScale={this.state.tileEditorScrollScale} />
             </div>
         )
     }
