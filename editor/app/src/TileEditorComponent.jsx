@@ -59,11 +59,10 @@ export default class TileEditorComponent extends Component {
     }
 
     mouseMove(e) {
-        // console.log(this.img.src);
         if (this.img.src !== "") {
-            this.sx -= e.movementX;
-            this.sy -= e.movementY;
-            // console.log(this.sx, this.sy);
+            const canvas = this.refs.tileEditorCanvas;
+            this.sx = Math.max(Math.min(this.sx - e.movementX, this.img.width - canvas.width), 0);
+            this.sy = Math.max(Math.min(this.sy - e.movementY, this.img.height - canvas.height), 0);
             this.redrawImage();
         }
     }
