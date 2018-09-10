@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 
+import styles from './TileEditorComponent.css';
+
 export default class TileEditorComponent extends Component {
 
     componentDidUpdate() {
@@ -13,7 +15,7 @@ export default class TileEditorComponent extends Component {
     }
 
     render() {
-        return <div>
+        return <div className={styles.TileEditorComponent}>
             <canvas ref="tileEditorCanvas"></canvas>
         </div>
     }

@@ -6,7 +6,10 @@ const electron = require('electron');
 class AddTileFileButton extends React.Component {
 
     render() {
-        return <button onClick={this.buttonClicked.bind(this)}>Add Tile File</button>
+        return <div className={styles.TileFileAddButton}>
+                    <button className={styles.TileFileAddButton}
+                            onClick={this.buttonClicked.bind(this)}>Add Tile File</button>
+        </div>
     }
 
     buttonClicked() {

@@ -4,6 +4,8 @@ import update from 'immutability-helper';
 import TileFilesComponent from './TileFilesComponent';
 import TileEditorComponent from './TileEditorComponent';
 
+import './global.css'
+
 export default class App extends Component {
     constructor(props, context) {
         super(props, context);
