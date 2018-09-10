@@ -20,19 +20,22 @@ export default class TileEditorComponent extends Component {
     }
 
     componentDidUpdate() {
-        this.img.src = this.props.src;
-        this.img.onload = () => {
-            const canvas = this.refs.tileEditorCanvas;
-            this.sWidth = this.dWidth =  Math.min(this.img.width, canvas.width);
-            this.sHeight = this.dHeight = Math.min(this.img.height, canvas.height);
-            this.redrawImage();
-        };
+        if (this.props.src !== undefined) {
+            this.img.src = this.props.src;
+            this.img.onload = () => {
+                const canvas = this.refs.tileEditorCanvas;
+                this.sWidth = this.dWidth =  Math.min(this.img.width, canvas.width);
+                this.sHeight = this.dHeight = Math.min(this.img.height, canvas.height);
+                this.redrawImage();
+            };
+        }
     }
 
     render() {
         return <div className={styles.TileEditorComponent}>
             <canvas onMouseDown={this.mouseDown.bind(this)}
                     onMouseUp={this.mouseUp.bind(this)}
+                    onMouseLeave={this.mouseLeave.bind(this)}
                     className={styles.TileEditorCanvas}
                     ref="tileEditorCanvas"></canvas>
         </div>
@@ -50,10 +53,20 @@ export default class TileEditorComponent extends Component {
         }
     }
 
+    mouseLeave(e) {
+        if (e.button === 2) {
+            this.refs.tileEditorCanvas.removeEventListener('mousemove', this.mouseMoveHandler);
+        }
+    }
+
     mouseMove(e) {
-        this.sx -= e.movementX;
-        this.sy -= e.movementY;
-        this.redrawImage();
+        // console.log(this.img.src);
+        if (this.img.src !== "") {
+            this.sx -= e.movementX;
+            this.sy -= e.movementY;
+            // console.log(this.sx, this.sy);
+            this.redrawImage();
+        }
     }
 
     redrawImage() {
