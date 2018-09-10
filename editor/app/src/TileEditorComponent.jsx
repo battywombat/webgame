@@ -16,7 +16,7 @@ export default class TileEditorComponent extends Component {
 
     render() {
         return <div className={styles.TileEditorComponent}>
-            <canvas ref="tileEditorCanvas"></canvas>
+            <canvas className={styles.TileEditorCanvas} ref="tileEditorCanvas"></canvas>
         </div>
     }
 }

@@ -1,10 +1,10 @@
 .TileFile {
-    width: 10em;
-    height: 10em;
+    max-width: inherit;
+    max-height: inherit;
+    width: 100%;
 }
 
 .TileFilesComponent {
-    float: left;
     height: 100vh;
     width: 25%;
 }

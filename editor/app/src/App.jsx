@@ -4,7 +4,8 @@ import update from 'immutability-helper';
 import TileFilesComponent from './TileFilesComponent';
 import TileEditorComponent from './TileEditorComponent';
 
-import './global.css'
+import './global.css';
+import styles from './App.css';
 
 export default class App extends Component {
     constructor(props, context) {
@@ -25,7 +26,7 @@ export default class App extends Component {
             onHeightChanged: this.onTileHeightChanged.bind(this)
         };
         const editingTileFile = this.state.tileFiles.find((e) => e.key === this.state.tileEditorSelected) || {};
-        return (<div>
+        return (<div className={styles.App}>
             <TileFilesComponent files={this.state.tileFiles} callbacks={tileFileCallbacks}/>
             <TileEditorComponent height={editingTileFile.height}
                                  width={editingTileFile.width}
