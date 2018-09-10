@@ -11,6 +11,9 @@ export default class App extends Component {
     constructor(props, context) {
         super(props, context);
         this.state = {
+            tileWidth: 16,
+            tileHeight: 16,
+            tiles: [],
             tileFiles: [],
             tileEditorSelected: -1,
             tileEditorScrollScale: 0.5
@@ -40,9 +43,25 @@ export default class App extends Component {
 
     onTileFileAdded(newFile) {
         let newFileKey = this.state.tileFiles.length;
-        this.setState(update(this.state, {
-            tileFiles: {$push: [{key: newFileKey, src: newFile, width: 16, height: 16}]}
-        }));
+        let img = new Image();
+        img.src = newFile;
+        img.onload = () => {
+            let nrows = img.height/this.state.tileHeight;
+            let ncols = img.width/this.state.tileWidth;
+            let ntiles = ncols*nrows;
+            let newTiles = [];
+            for (let i = 0; i < ntiles; i++) {
+                newTiles.push({
+                    src: newFile,
+                    xOffset: (i % ncols)*this.state.tileWidth,
+                    yOffset: Math.floor(i/nrows)*this.state.tileHeight,
+                });
+            }
+            this.setState(update(this.state, {
+                tileFiles: {$push: [{key: newFileKey, src: newFile}]},
+                tiles: {$push: newTiles}
+            }));
+        };
     }
 
     onDisplayTileFile(key) {
