@@ -15,14 +15,13 @@ export default class TileEditorComponent extends Component {
         this.dHeight = 0;
         this.dx = 0;
         this.dy = 0;
-        this.lastX = 0;
-        this.lastY = 0;
     }
 
     componentDidUpdate() {
         if (this.props.src !== undefined) {
             this.img.src = this.props.src;
             this.img.onload = () => {
+                this.sx = this.sy = 0;
                 const canvas = this.refs.tileEditorCanvas;
                 this.sWidth = this.dWidth =  Math.min(this.img.width, canvas.width);
                 this.sHeight = this.dHeight = Math.min(this.img.height, canvas.height);
