@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import styles from './TileListComponent.css';
 
-class TileComponent extends Compoent {
+class TileComponent extends Component {
 
     render() {
         return <img width={this.props.width}
