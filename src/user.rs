@@ -8,7 +8,7 @@ use rocket::http::{Cookie, Cookies};
 use rocket::request::{self, FromRequest, Request, FlashMessage, Form};
 use rocket::response::{Redirect, Flash};
 use rocket::Outcome;
-use rocket_contrib::Template;
+use rocket_contrib::templates::Template;
 use rusqlite::Connection;
 use database::DbConn;
 
@@ -44,7 +44,7 @@ impl<'a, 'r> FromRequest<'a, 'r> for UserLogin {
 }
 
 #[get("/login", rank = 2)]
-fn login_page(flash: Option<FlashMessage>) -> Template {
+pub fn login_page(flash: Option<FlashMessage>) -> Template {
     let mut context = HashMap::new();
     if let Some(ref msg) = flash {
         context.insert("errormessage", msg.msg());
@@ -78,9 +78,8 @@ pub fn user_page(db_conn: State<DbConn>, user: Option<UserLogin>) -> Result<Temp
 
 #[post("/login", data= "<user_form>")]
 pub fn login(db_conn: State<DbConn>, mut cookies: Cookies, user_form: Form<User>) -> Result<Redirect, Flash<Redirect>> {
-    let user = user_form.get();
     let conn = db_conn.lock().unwrap();
-    match validate(&conn, user) {
+    match validate(&conn, &user_form) {
         Ok(id) => {
             cookies.add_private(Cookie::new("user_id", id.to_string()));
             Ok(Redirect::to("user"))

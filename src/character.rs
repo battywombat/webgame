@@ -2,9 +2,8 @@ use rusqlite;
 
 use std::collections::HashMap;
 use rocket::State;
-use rocket::response::Failure;
 use rocket::http::Status;
-use rocket_contrib::Template;
+use rocket_contrib::templates::Template;
 use rusqlite::Connection;
 use database::DbConn;
 
@@ -46,16 +45,16 @@ pub fn get_character(conn: &Connection, id: i32) -> rusqlite::Result<Character> 
 }
 
 #[get("/character/<id>")]
-fn get_character_page(db_conn: State<DbConn>, id: i32) -> Result<Template, Failure> {
+pub fn get_character_page(db_conn: State<DbConn>, id: i32) -> Result<Template, Status> {
     let conn = match db_conn.lock() {
         Ok(c) => c,
-        Err(_) => return Err(Failure(Status::new(500, "Failed to lock database")))
+        Err(_) => return Err(Status::new(500, "Failed to lock database"))
     };
     let mut map = HashMap::new();
     let character = match get_character(&conn, id) {
         Ok(c) => c,
-        Err(rusqlite::Error::QueryReturnedNoRows) => return Err(Failure(Status::NotFound)),
-        Err(_) => return Err(Failure(Status::new(500, "Database error")))
+        Err(rusqlite::Error::QueryReturnedNoRows) => return Err(Status::NotFound),
+        Err(_) => return Err(Status::new(500, "Database error"))
     };
     map.insert("title", format!("{}'s Character Sheet", character.name));
     map.insert("name", character.name);

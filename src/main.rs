@@ -1,11 +1,9 @@
-#![feature(plugin, custom_derive, decl_macro, never_type)]
-#![plugin(rocket_codegen)]
+#![feature(proc_macro_hygiene, decl_macro)]
 
 extern crate rocket_contrib;
-extern crate rocket;
+#[macro_use] extern crate rocket;
 extern crate rusqlite;
-#[macro_use]
-extern crate serde_derive;
+#[macro_use] extern crate serde_derive;
 extern crate serde;
 extern crate serde_json;
 
@@ -16,7 +14,7 @@ mod graphics;
 
 use rocket::State;
 use rocket::response::Redirect;
-use rocket_contrib::Template;
+use rocket_contrib::templates::Template;
 use database::DbConn;
 
 #[get("/")]
