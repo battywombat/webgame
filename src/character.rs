@@ -44,7 +44,7 @@ pub fn get_character(conn: &Connection, id: i32) -> rusqlite::Result<Character> 
     }
 }
 
-#[get("/character/<id>")]
+#[get("/character/<id>/page")]
 pub fn get_character_page(db_conn: State<DbConn>, id: i32) -> Result<Template, Status> {
     let conn = match db_conn.lock() {
         Ok(c) => c,
