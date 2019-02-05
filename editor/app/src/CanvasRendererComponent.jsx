@@ -24,13 +24,15 @@ export default class CanvasRendererComponent extends Component {
             onImageLoaded(this.props.srcImage, () => {
                 this.sx = this.sy = 0;
                 const canvas = this.refs.tileEditorCanvas;
-                this.sWidth = this.dWidth =  Math.min(this.props.srcImage.width, canvas.width);
-                this.sHeight = this.dHeight = Math.min(this.props.srcImage.height, canvas.height);
+                canvas.width = canvas.offsetWidth;
+                canvas.height = canvas.offsetHeight;
+                this.sWidth = this.dWidth =  this.props.srcImage.naturalWidth;
+                this.sHeight = this.dHeight = this.props.srcImage.naturalHeight;
                 this.redrawImage();
             });
         }
     }
-    
+
     render() {
         return <canvas onMouseDown={this.mouseDown.bind(this)}
                        onMouseUp={this.mouseUp.bind(this)}
