@@ -6,6 +6,7 @@ export default class CanvasRendererComponent extends Component {
 
     componentWillMount() {
         this.mouseMoveHandler = this.mouseMove.bind(this);
+        this.windowResizeHandler = this.updateDimensions.bind(this);
         this.sx = 0;
         this.sy = 0;
         this.sWidth = 0;
@@ -16,6 +17,22 @@ export default class CanvasRendererComponent extends Component {
         this.dy = 0;
     }
 
+    componentDidMount() {
+        window.addEventListener('resize', this.windowResizeHandler);
+        this.updateDimensions();
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('resize', this.windowResizeHandler);
+    }
+
+    updateDimensions() {
+        const canvas = this.refs.tileEditorCanvas;
+        canvas.width = canvas.offsetWidth;
+        canvas.height = canvas.offsetHeight;
+        this.redrawImage();
+    }
+
     componentDidUpdate() {
         if (this.props.srcImage === undefined) {
             return;
@@ -23,9 +40,6 @@ export default class CanvasRendererComponent extends Component {
         if (this.props.srcImage.constructor === HTMLImageElement) {
             onImageLoaded(this.props.srcImage, () => {
                 this.sx = this.sy = 0;
-                const canvas = this.refs.tileEditorCanvas;
-                canvas.width = canvas.offsetWidth;
-                canvas.height = canvas.offsetHeight;
                 this.sWidth = this.dWidth =  this.props.srcImage.naturalWidth;
                 this.sHeight = this.dHeight = this.props.srcImage.naturalHeight;
                 this.redrawImage();
