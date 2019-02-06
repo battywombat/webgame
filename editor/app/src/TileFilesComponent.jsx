@@ -1,6 +1,8 @@
 import React from 'react';
 import styles from './TileFilesComponent.css';
 
+import CanvasRendererComponent from './CanvasRendererComponent';
+
 const electron = require('electron');
 
 class AddTileFileButton extends React.Component {
@@ -25,8 +27,14 @@ class AddTileFileButton extends React.Component {
 }
 
 class TileFile extends React.Component {
+
     render() {
-        return <img onDoubleClick={this.doubleClicked.bind(this)} className={styles.TileFile} src={this.props.src} />
+        const srcImage = new Image();
+        if (this.props.src !== undefined) {
+            srcImage.src = this.props.src;
+        }
+        return <CanvasRendererComponent srcImage={srcImage}
+                                        onDoubleClick={this.doubleClicked.bind(this)} />
     }
 
     doubleClicked() {
