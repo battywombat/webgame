@@ -1,5 +1,4 @@
 use std;
-use rusqlite;
 
 use std::collections::HashMap;
 use std::fmt::{Formatter, Display};
@@ -10,6 +9,7 @@ use rocket::Outcome;
 use rocket_contrib::templates::Template;
 use rusqlite::Connection;
 use database::DbConn;
+use error::WebGameError;
 
 #[derive(Debug, FromForm)]
 pub struct User {
@@ -60,7 +60,7 @@ pub fn user_page(db_conn: DbConn, user: Option<UserLogin>) -> Result<Template, F
         Some(user) => {
             let mut map = HashMap::new();
             // Will never fail, and if it does, we have bigger problems.
-            let user = get_user_by_id(&db_conn, user.id).unwrap();
+            let user = get_user_by_id(&db_conn, user.id)?;
             map.insert("title", String::from("User Page"));
             map.insert("name", user.username);
             Ok(Template::render("user", map))
@@ -117,13 +117,13 @@ fn validate(conn: &Connection, user: &User) -> Result<i32, Box<std::error::Error
     }
 }
 
-fn get_user_by_id(conn: &Connection, userid: i32) -> Result<User, rusqlite::Error> {
-    conn.query_row("SELECT username, password FROM users where id=?", &[&userid], |row| {
+fn get_user_by_id(conn: &Connection, userid: i32) -> Result<User, WebGameError> {
+    Ok(conn.query_row("SELECT username, password FROM users where id=?", &[&userid], |row| {
         let username = row.get(0);
         let password = row.get(1);
         User{
             username,
             password
         }
-    })
+    })?)
 }

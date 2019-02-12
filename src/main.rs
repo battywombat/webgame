@@ -2,7 +2,6 @@
 
 #[macro_use] extern crate rocket_contrib;
 #[macro_use] extern crate rocket;
-// extern crate rusqlite;
 #[macro_use] extern crate serde_derive;
 extern crate serde;
 extern crate serde_json;
@@ -11,6 +10,7 @@ mod database;
 mod user;
 mod character;
 mod graphics;
+mod error;
 
 use rocket::response::Redirect;
 use rocket_contrib::templates::Template;
