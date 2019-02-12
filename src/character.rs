@@ -1,7 +1,6 @@
 use rusqlite;
 
 use std::collections::HashMap;
-use rocket::State;
 use rocket::http::Status;
 use rocket_contrib::templates::Template;
 use rusqlite::Connection;
@@ -45,13 +44,9 @@ pub fn get_character(conn: &Connection, id: i32) -> rusqlite::Result<Character> 
 }
 
 #[get("/character/<id>/page")]
-pub fn get_character_page(db_conn: State<DbConn>, id: i32) -> Result<Template, Status> {
-    let conn = match db_conn.lock() {
-        Ok(c) => c,
-        Err(_) => return Err(Status::new(500, "Failed to lock database"))
-    };
+pub fn get_character_page(db_conn: DbConn, id: i32) -> Result<Template, Status> {
     let mut map = HashMap::new();
-    let character = match get_character(&conn, id) {
+    let character = match get_character(&db_conn, id) {
         Ok(c) => c,
         Err(rusqlite::Error::QueryReturnedNoRows) => return Err(Status::NotFound),
         Err(_) => return Err(Status::new(500, "Database error"))

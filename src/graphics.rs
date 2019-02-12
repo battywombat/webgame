@@ -1,7 +1,6 @@
 use std::fs::File;
 use rusqlite;
 use rocket_contrib::json::Json;
-use rocket::State;
 use rocket::http::Status;
 use rusqlite::Connection;
 
@@ -20,26 +19,16 @@ pub struct TileRecord {
 }
 
 #[get("/tilemap")]
-pub fn get_tilemap(db_conn: State<DbConn>) -> Result<Json<Vec<TileRecord>>, Status> {
-    let conn = match db_conn.lock() {
-        Ok(c) => c,
-        Err(_) => return Err(Status::new(500, "Failed to lock database"))
-    };
-
-    match get_all_tiles(&conn) {
+pub fn get_tilemap(db_conn: DbConn) -> Result<Json<Vec<TileRecord>>, Status> {
+    match get_all_tiles(&db_conn) {
         Ok(tiles) => Ok(Json(tiles)),
         Err(_) => Err(Status::new(500, "Error accessing database"))
     }
 }
 
 #[get("/tile/<id>")]
-pub fn get_tile_file(db_conn: State<DbConn>, id: i32) -> Result<File, Status> {
-    let conn = match db_conn.lock() {
-        Ok(c) => c,
-        Err(_) => return Err(Status::new(500, "Failed to lock database"))
-    };
-
-    let fp = match get_tile_path_from_id(&conn, id) {
+pub fn get_tile_file(db_conn: DbConn, id: i32) -> Result<File, Status> {
+    let fp = match get_tile_path_from_id(&db_conn, id) {
         Ok(f) => f,
         Err(rusqlite::Error::QueryReturnedNoRows) => return Err(Status::NotFound),
         Err(_) => return Err(Status::new(500, "Error in database"))

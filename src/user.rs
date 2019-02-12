@@ -3,7 +3,6 @@ use rusqlite;
 
 use std::collections::HashMap;
 use std::fmt::{Formatter, Display};
-use rocket::State;
 use rocket::http::{Cookie, Cookies};
 use rocket::request::{self, FromRequest, Request, FlashMessage, Form};
 use rocket::response::{Redirect, Flash};
@@ -56,16 +55,12 @@ pub fn login_page(flash: Option<FlashMessage>) -> Template {
 }
 
 #[get("/user")]
-pub fn user_page(db_conn: State<DbConn>, user: Option<UserLogin>) -> Result<Template, Flash<Redirect>> {
+pub fn user_page(db_conn: DbConn, user: Option<UserLogin>) -> Result<Template, Flash<Redirect>> {
     match user {
         Some(user) => {
             let mut map = HashMap::new();
-            let conn = match db_conn.lock() {
-                Ok(c) => c,
-                Err(_) => return Err(Flash::error(Redirect::to("login"), "Something went wrong with our database."))
-            };
             // Will never fail, and if it does, we have bigger problems.
-            let user = get_user_by_id(&conn, user.id).unwrap();
+            let user = get_user_by_id(&db_conn, user.id).unwrap();
             map.insert("title", String::from("User Page"));
             map.insert("name", user.username);
             Ok(Template::render("user", map))
@@ -77,9 +72,8 @@ pub fn user_page(db_conn: State<DbConn>, user: Option<UserLogin>) -> Result<Temp
 }
 
 #[post("/login", data= "<user_form>")]
-pub fn login(db_conn: State<DbConn>, mut cookies: Cookies, user_form: Form<User>) -> Result<Redirect, Flash<Redirect>> {
-    let conn = db_conn.lock().unwrap();
-    match validate(&conn, &user_form) {
+pub fn login(db_conn: DbConn, mut cookies: Cookies, user_form: Form<User>) -> Result<Redirect, Flash<Redirect>> {
+    match validate(&db_conn, &user_form) {
         Ok(id) => {
             cookies.add_private(Cookie::new("user_id", id.to_string()));
             Ok(Redirect::to("user"))

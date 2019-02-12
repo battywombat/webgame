@@ -7,3 +7,4 @@ build
 .env
 npm-debug.log
 .idea
+*.sqlite

@@ -4,11 +4,11 @@ use std::fs::File;
 use std::io;
 use std::io::prelude::*;
 use std::path::Path;
-use std::sync::Mutex;
 use rusqlite::Connection;
 use rusqlite::Result;
 
-pub type DbConn = Mutex<Connection>;
+#[database("sqlite_db")]
+pub struct DbConn(rusqlite::Connection);
 
 fn read_schema<P>(path: P) -> io::Result<String>
     where P: AsRef<Path> {
@@ -27,7 +27,7 @@ fn exec_file<P>(conn: &Connection, path: P) -> Result<()>
     conn.execute_batch(schema.as_str())
 }
 
-fn create_connection_with_scripts<P>(database: P, schema: Option<P>, testdata: Option<P>) -> Result<DbConn>
+fn create_connection_with_scripts<P>(database: P, schema: Option<P>, testdata: Option<P>) -> Result<()>
     where P: AsRef<Path> {
     let conn = Connection::open(database)?;
     if let Some(sc) = schema {
@@ -36,7 +36,7 @@ fn create_connection_with_scripts<P>(database: P, schema: Option<P>, testdata: O
     if let Some(data) = testdata {
         exec_file(&conn, data)?;
     }
-    Ok(Mutex::new(conn))
+    Ok(())
 }
 
 // pub fn create_connection<P>(database: P) -> Result<DbConn>
@@ -49,7 +49,7 @@ fn create_connection_with_scripts<P>(database: P, schema: Option<P>, testdata: O
 //     create_connection_with_scripts(database, Some(schema), None)
 // }
 
-pub fn create_connection_with_testdata<P>(database: P, schema: P, testdata: P) -> Result<DbConn>
+pub fn create_connection_with_testdata<P>(database: P, schema: P, testdata: P) -> Result<()>
     where P: AsRef<Path> {
     create_connection_with_scripts(database, Some(schema), Some(testdata))
 }
